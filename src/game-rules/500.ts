@@ -1,6 +1,5 @@
-import { IGameRules, TLead } from '../types/game-rules';
-import { TCall } from '../types/game-rules';
-import { IScoreEntryTrick, TScoreCard, TSimpleScore } from '../types/score-card';
+import { IGameRules, TCall, TLead } from '../../types/game-rules'
+import { IScoreEntryTrick, TScoreCard, TSimpleScore } from '../../types/score-card';
 import { getHighLow, getPlayer, getPlayerError, rankPlayers } from './game-utils';
 
 

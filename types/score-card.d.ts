@@ -17,7 +17,7 @@ export interface IScoreEntryStandard {
 export interface IScoreEntryTrick {
   call: string|null,
   score: number,
-  success: boolean,
+  success: boolean|null,
   time: GMTtime,
 }
 
