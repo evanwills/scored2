@@ -1,7 +1,7 @@
-import { TWinnerLooser } from '../types/game-data.d';
-import { IGameRules } from '../types/game-rules';
-import { TCall } from '../types/game-rules';
-import { TScoreCard, TSimpleScore } from '../types/score-card';
+import { TWinnerLooser } from '../../types/game-data.d';
+import { IGameRules } from '../../types/game-rules';
+import { TCall } from '../../types/game-rules';
+import { TScoreCard, TSimpleScore } from '../../types/score-card';
 import { getHighLow, getPlayer, getPlayerError, rankPlayers } from './game-utils';
 
 
@@ -26,9 +26,9 @@ export class AnyTeam implements IGameRules {
   // ----------------------------------------------------------------
   // START: public property declarations
 
-  readonly id: string = 'any-team'
+  readonly id: string = 'any-team';
   readonly lowestWins: boolean = false;
-  readonly name: string = 'Any (teams)';
+  readonly name: string = 'Teams game';
   readonly maxPlayers: number|null = null;
   readonly maxScore: number|null = null;
   readonly minPlayers: number = 2;

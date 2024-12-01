@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS E_gamePermissionsModes
   -- Different permission modes for a game. (Not replicated/synced because it does not change.)
 (
   gamePermissionsMode_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  gamePermissionsMode_key VARCHAR(30) NOT NULL,
-  gamePermissionsMode_label VARCHAR(30) NOT NULL,
-  gamePermissionsMode_description CHAR(128) NOT NULL
+  gamePermissionsMode_key VARCHAR(24) NOT NULL,
+  gamePermissionsMode_label VARCHAR(24) NOT NULL,
+  gamePermissionsMode_description CHAR(160) NOT NULL
 );
 CREATE UNIQUE INDEX UNI_gamePermissionsMode_key ON E_gamePermissionsModes(gamePermissionsMode_key);
 -- SELECT crsql_as_crr('E_gameStates');
@@ -40,25 +40,25 @@ INSERT INTO E_gamePermissionsModes (
     1,
     'AUTOCRAT',
     'Autocrat',
-    'Only the owner of the game can change anything.'
+    'Only the game owner can change anything.'
   ),
   (
     2,
-    'BENEVOLENT_DICTATOR',
-    'Benevolent dictator',
-    'Any player can add scores but those scores must be approved by the owner. Only the owner can update or delete scores.'
+    'CONTROL_FREAK',
+    'Control freak',
+    'Any player can add and update but the game owner must approve all changes.'
   ),
   (
     3,
-    'CONTROL_FREAK',
-    'Control freak',
-    'Any player can add and update but the owner must approve all changes.'
+    'BENEVOLENT_DICTATOR',
+    'Benevolent dictator',
+    'Any player can add scores. If there is a conflict the game owner must choose. Any player can update or delete scores but game owner must approve.'
   ),
   (
     4,
     'ANARCHIST',
     'Anarchist',
-    'All players have the same rights.'
+    'All players have the same rights. (If there is a conflict, the most recent update wins.)'
   );
 
 
@@ -80,11 +80,12 @@ INSERT INTO E_gameStates (
   gameState_key,
   gameState_label
 ) VALUES
-  ( 1, 'SET_TYPE',    'Set the type of game being played' ),
-  ( 2, 'ADD_PLAYERS', 'Add players/teams to game' ),
-  ( 3, 'PLAYING',     'Playing game (adding scores)' ),
-  ( 4, 'SUSPENDED',   'Game is temporarily suspended' ),
-  ( 5, 'GAME_OVER',   'Game over' );
+  ( 1, 'SET_TYPE',       'Set the type of game being played' ),
+  ( 2, 'ADD_PLAYERS',    'Add players/teams to game' ),
+  ( 3, 'SET_PERMISSION', 'Set permissions for individual players' ),
+  ( 4, 'PLAYING',        'Playing game (adding scores)' ),
+  ( 5, 'SUSPENDED',      'Game is temporarily suspended' ),
+  ( 6, 'GAME_OVER',      'Game over' );
 
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -226,17 +227,17 @@ SELECT crsql_as_crr('D_players');
 -- replicated/synced
 
 CREATE TABLE IF NOT EXISTS D_owners
- -- D_appState is a replicated/synced table that holds user preference data and app state for a given user.
+ -- D_owners is a replicated/synced table that holds user preference data for a given user.
 (
   owner_id CHAR(21) NOT NULL,
-  owner_gameID CHAR(21) DEFAULT NULL, -- Current game this user is playing
+  owner_colourScheme TEXT DEFAULT NULL, -- JSON object containing custom colour palate values for this app
   owner_darkMode BOOLEAN DEFAULT NULL, -- Whether or not the user wants dark mode
-  owner_fontAdjust TINYINT(3) NOT NULL DEFAULT 1, -- the amount to up/down scale the base font size
-  owner_lastURL VARCHAR(255) NOT NULL DEFAULT '', -- the last URL the user went to
-  owner_ownerID CHAR(21) NOT NULL, -- the player ID this app state data is linked to
   owner_defaultPermissionsMode TINYINT(3) NOT NULL, -- When player creates a new game this is the default permissions mode applied to the game
+  owner_fontAdjust TINYINT(3) NOT NULL DEFAULT 1, -- the amount to up/down scale the base font size
+  owner_gameID CHAR(21) DEFAULT NULL, -- Current game this user is playing
+  owner_playerID CHAR(21) NOT NULL, -- the player ID this owner is linked to
   FOREIGN KEY(owner_gameID) REFERENCES D_gameData(gameData_id),
-  FOREIGN KEY(owner_ownerID) REFERENCES D_players(player_id),
+  FOREIGN KEY(owner_playerID) REFERENCES D_players(player_id),
   FOREIGN KEY(owner_defaultPermissionsMode) REFERENCES E_gamePermissionsModes(gamePermissionsMode_id)
 );
 SELECT crsql_as_crr('D_owner');
@@ -251,6 +252,7 @@ CREATE TABLE IF NOT EXISTS D_appState
 (
   appState_id TINYINT(1) NOT NULL,
   appState_ownerID CHAR(21) NOT NULL,
+  appState_lastURL VARCHAR(255) NOT NULL DEFAULT '', -- the last URL (within scored) the user went to
   FOREIGN KEY(appState_ownerID) REFERENCES D_owners(owner_id)
 );
 

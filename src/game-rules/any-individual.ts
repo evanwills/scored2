@@ -1,7 +1,7 @@
-import { IGameRules } from "../types/game-rules";
-import { TCall } from "../types/game-rules";
-import { TScoreCard, TSimpleScore } from "../types/score-card";
-import { getPlayer, getPlayerError, rankPlayers } from "./game-utils";
+import { IGameRules } from '../types/game-rules';
+import { TCall } from '../types/game-rules';
+import { TScoreCard, TSimpleScore } from '../types/score-card';
+import { getPlayer, getPlayerError, rankPlayers } from './game-utils';
 
 
 export class AnyIndividual implements IGameRules {

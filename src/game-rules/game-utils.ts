@@ -1,5 +1,5 @@
-import { TWinnerLooser } from '../types/game-data.d';
-import { TScoreCard } from '../types/score-card';
+import { TWinnerLooser } from '../../types/game-data.d';
+import { TScoreCard } from '../../types/score-card';
 
 /**
  * Set the position/rank of players based on their score.

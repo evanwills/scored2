@@ -12,3 +12,6 @@ export type TAppRoute = {
 };
 
 export type FIdbSuccess = (event : Event) => void;
+
+export type UID = string;
+export type ISO8601 = string;
